@@ -1,0 +1,19 @@
+{
+    "name": "diggme/opensdk",
+    "description": "Diggme Open SDK",
+    "authors": [
+        {
+            "name": "Develop Department",
+            "email": "develop@diggme.cn"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">5.4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "diggme\\": "./src"
+        }
+    }
+}
