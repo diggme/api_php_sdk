@@ -98,7 +98,7 @@ class Client
         $url = sprintf('%s/%s', $this->serverUrl, 'open/authorize');
         $params = [
             'grant_type' => 'authorize_code',
-            'app_key' => $this->appKey,
+            'app_key' => urlencode($this->appKey),
             'redirect_url' => urlencode($redirectUrl),
             'scope' => 'all'
         ];
@@ -115,65 +115,9 @@ class Client
         $url = sprintf('%s/%s', $this->serverUrl, 'open/token');
         $params = [
             'grant_type' => 'authorize_code',
-            'app_key' => $this->appKey,
+            'app_key' => urlencode($this->appKey),
             'code' => $code,
             'scope' => 'all'
-        ];
-        $response = $this->network->get($url, $params);
-        return new Result($response);
-    }
-
-    /*************************************************************************
-     * User Token (登录用户身份识别令牌)
-     ************************************************************************/
-
-    /**
-     * 获取用户access_token (使用账号管理)
-     * @param string $account
-     * @param string $password
-     * @return Result
-     */
-    public function getUserToken($account, $password)
-    {
-        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/token');
-        $params = [
-            'grand_type' => 'client_credential',
-            'account' => $account,
-            'password' => md5($password)
-        ];
-        $response = $this->network->get($url, $params);
-        return new Result($response);
-    }
-
-    /**
-     * 获取用户access_token (使用Diggme开放平台回调code)
-     * @param $code
-     * @return Result
-     */
-    public function getUserTokenByCode($code)
-    {
-        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/token');
-        $params = [
-            'grand_type' => 'authorize_code',
-            'code' => $code
-        ];
-        $response = $this->network->get($url, $params);
-        return new Result($response);
-    }
-
-    /**
-     * 获取用户access_token (使用第三方回调code)
-     * @param string $code
-     * @param string $flag
-     * @return Result
-     */
-    public function getUserTokenByThirdCode($code, $flag = 'wx')
-    {
-        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/thirdToken');
-        $params = [
-            'grand_type' => 'authorize_code',
-            'code' => $code,
-            'flag' => $flag
         ];
         $response = $this->network->get($url, $params);
         return new Result($response);
