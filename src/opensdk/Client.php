@@ -164,7 +164,7 @@ class Client
      */
     public function getTestDetail($test_id)
     {
-        $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/codeStatus');
+        $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/detail');
 
         $params['test_id'] = $test_id;
 
