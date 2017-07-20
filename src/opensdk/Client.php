@@ -295,15 +295,17 @@ class Client
     /**
      * 提交测试结果
      * @param $test_id
-     * @param $choose
+     * @param $in_code
+     * @param $choices
      * @return Result
      */
-    public function postTestResult($test_id, $choose)
+    public function postTestResult($test_id, $in_code, $choices)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/result');
 
         $params['test_id'] = $test_id;
-        $params['format'] = json_encode($choose);
+        $params['in_code'] = $in_code;
+        $params['choices'] = json_encode($choices);
 
         $this->network->setHeader('Authorization', $this->accessToken);
         $response = $this->network->post($url, $params);
