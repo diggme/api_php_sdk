@@ -330,7 +330,7 @@ class Client
         $encryptData['status'] = 'success';
 
         $params = [
-            'encrypt_data' => openssl_encrypt(json_encode($encryptData), 'aes-256-cfb', $this->appSecret)
+            'encrypt_data' => @openssl_encrypt(json_encode($encryptData), 'aes-256-cfb', $this->appSecret)
         ];
 
         $this->network->setHeader('Authorization', $this->accessToken);
