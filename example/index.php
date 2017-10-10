@@ -28,9 +28,22 @@ if ($result->getStatus()) {
     $sdk->accessToken = $token;
 }
 
-var_dump($result);
+print "ACCESS_TOKEN: " . PHP_EOL;
+print $sdk->accessToken . PHP_EOL;
+print PHP_EOL;
 
-$categoryId = 0;
-$resData2 = $sdk->getTestList($categoryId)->getData();
+# 获取测试列表
+print "TEST_ID: " . PHP_EOL;
+$result2 = $sdk->getTestList(0)->getData();
+foreach ($result2 as $v) {
+    print $v['id'] . ':' . $v['title'] . PHP_EOL;
+}
+print PHP_EOL;
 
-var_dump($resData2);
+# 获取测试兑换码
+print "IN_CODE: " . PHP_EOL;
+$no = time();
+$testId = count($result2) ? $result2[0]['id'] : 0;
+$result3 = $sdk->getTestCode($no, $testId)->getData();
+print $result3['code'];
+print PHP_EOL;
