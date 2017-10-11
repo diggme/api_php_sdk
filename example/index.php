@@ -47,3 +47,13 @@ $testId = count($result2) ? $result2[0]['id'] : 0;
 $result3 = $sdk->getTestCode($no, $testId)->getData();
 print $result3['code'];
 print PHP_EOL;
+
+# 更改支付状态
+print "CALLBACK: " . PHP_EOL;
+$result4 = $sdk->postNotifyPayCb($result3['code']);
+if ($result4->getStatus() === 200) {
+    print json_encode($result4->getMessage(), 256);
+    print "SUCCESS" . PHP_EOL;
+} else {
+    print "FAIL" . PHP_EOL;
+}
