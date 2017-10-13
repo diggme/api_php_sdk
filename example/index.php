@@ -51,9 +51,25 @@ print PHP_EOL;
 # 更改支付状态
 print "CALLBACK: " . PHP_EOL;
 $result4 = $sdk->postNotifyPayCb($result3['code']);
-if ($result4->getStatus() === 200) {
+if ($result4->getStatus()) {
     print json_encode($result4->getMessage(), 256);
     print "SUCCESS" . PHP_EOL;
 } else {
     print "FAIL" . PHP_EOL;
+}
+print PHP_EOL;
+
+# 查询in_code状态
+print "QUERY_STATUS:" . PHP_EOL;
+$result5 = $sdk->getTestCodeStatus($result3['code'])->getData();
+print json_encode($result5) . PHP_EOL;
+print PHP_EOL;
+
+
+# 测试报告页面（可嵌入iframe/webview）
+print "REPORT";
+if ($yourSystemEnv == 'prod') {
+    print "http://wx.diggme.cn/channel/entry.html?channel_id=89&test_id=32&in_code=" . $result3['code'];
+} else {
+    print "http://wxdev.diggme.cn/channel/entry.html?channel_id=89&test_id=32&in_code=" . $result3['code'];
 }
