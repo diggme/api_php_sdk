@@ -8,15 +8,16 @@ diggme\Loader::register();
 $appKey = '下发的APP_KEY';
 $appSecret = '下发的APP_SECRET';
 
-$yourSystemEnv = 'develop';
-$serverUrl = 'http://apidev.diggme.cn/api/v1';
-if ($yourSystemEnv === 'prod') {
-    $serverUrl = 'http://api.diggme.cn/api/v1';
-}
+// 初始化SDK
+$sdk = new diggme\opensdk\Client($appKey, $appSecret);
 
-$sdk = new diggme\opensdk\Client($appKey, $appSecret, $serverUrl);
+// 设定SDK访问环境、develop测试服务器，prod正式服务器
+$sdk->setEnv('develop');
+
+// 获取TOKEN
 $result = $sdk->getAccessToken();
 
+// 判定请求状态
 if ($result->getStatus()) {
     $resData = $result->getData();
 

@@ -19,7 +19,9 @@ class Loader
      */
     protected static $psr4 = [
         'diggme' => __DIR__,
-        'diggme\\opensdk' => __DIR__ . '/opensdk'
+        'diggme\\utils' => __DIR__ . '/utils',
+        'diggme\\opensdk' => __DIR__ . '/opensdk',
+        'diggme\\agentsdk' => __DIR__ . '/agentsdk'
     ];
 
     /**

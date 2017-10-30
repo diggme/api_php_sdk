@@ -1,6 +1,6 @@
 <?php
 
-namespace diggme\opensdk;
+namespace diggme\utils;
 
 /**
  * Class Network

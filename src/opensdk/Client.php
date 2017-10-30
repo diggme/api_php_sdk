@@ -2,6 +2,8 @@
 
 namespace diggme\opensdk;
 
+use diggme\utils\Network;
+
 /**
  * Class DiggmeSDK
  * @package diggme\opensdk
@@ -66,6 +68,15 @@ class Client
         $this->network->setHeader('Authorization', $this->accessToken);
     }
 
+    public function setEnv($env)
+    {
+        $this->serverUrl = 'http://api.diggme.local/api/v1';
+        if ($env === 'develop') {
+            $this->serverUrl = 'http://apidev.diggme.cn/api/v1';
+        } elseif ($env === 'prod' || $env === 'production') {
+            $this->serverUrl = 'http://api.diggme.cn/api/v1';
+        }
+    }
 
     /*************************************************************************
      * Access Token (访问令牌)
@@ -98,7 +109,7 @@ class Client
         $url = sprintf('%s/%s', $this->serverUrl, 'open/authorize');
         $params = [
             'grant_type' => 'authorize_code',
-            'app_key' => urlencode($this->appKey),
+            'app_key' => $this->appKey,
             'redirect_url' => urlencode($redirectUrl),
             'scope' => 'all'
         ];
@@ -115,9 +126,65 @@ class Client
         $url = sprintf('%s/%s', $this->serverUrl, 'open/token');
         $params = [
             'grant_type' => 'authorize_code',
-            'app_key' => urlencode($this->appKey),
+            'app_key' => $this->appKey,
             'code' => $code,
             'scope' => 'all'
+        ];
+        $response = $this->network->get($url, $params);
+        return new Result($response);
+    }
+
+    /*************************************************************************
+     * User Token (登录用户身份识别令牌)
+     ************************************************************************/
+
+    /**
+     * 获取用户access_token (使用账号管理)
+     * @param string $account
+     * @param string $password
+     * @return Result
+     */
+    public function getUserToken($account, $password)
+    {
+        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/token');
+        $params = [
+            'grand_type' => 'client_credential',
+            'account' => $account,
+            'password' => md5($password)
+        ];
+        $response = $this->network->get($url, $params);
+        return new Result($response);
+    }
+
+    /**
+     * 获取用户access_token (使用Diggme开放平台回调code)
+     * @param $code
+     * @return Result
+     */
+    public function getUserTokenByCode($code)
+    {
+        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/token');
+        $params = [
+            'grand_type' => 'authorize_code',
+            'code' => $code
+        ];
+        $response = $this->network->get($url, $params);
+        return new Result($response);
+    }
+
+    /**
+     * 获取用户access_token (使用第三方回调code)
+     * @param string $code
+     * @param string $flag
+     * @return Result
+     */
+    public function getUserTokenByThirdCode($code, $flag = 'wx')
+    {
+        $url = sprintf('%s/%s', $this->serverUrl, 'open/user/thirdToken');
+        $params = [
+            'grand_type' => 'authorize_code',
+            'code' => $code,
+            'flag' => $flag
         ];
         $response = $this->network->get($url, $params);
         return new Result($response);
@@ -164,7 +231,7 @@ class Client
      */
     public function getTestDetail($test_id)
     {
-        $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/detail');
+        $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/codeStatus');
 
         $params['test_id'] = $test_id;
 
@@ -278,7 +345,7 @@ class Client
      * @param string $format
      * @return Result
      */
-    public function getTestReport($test_id, $in_code, $format = 'json')
+    public function getTestReport($test_id, $in_code, $format = ' json')
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/report');
 
@@ -295,17 +362,15 @@ class Client
     /**
      * 提交测试结果
      * @param $test_id
-     * @param $in_code
-     * @param $choices
+     * @param $choose
      * @return Result
      */
-    public function postTestResult($test_id, $in_code, $choices)
+    public function postTestResult($test_id, $choose)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/result');
 
         $params['test_id'] = $test_id;
-        $params['in_code'] = $in_code;
-        $params['choices'] = json_encode($choices);
+        $params['format'] = json_encode($choose);
 
         $this->network->setHeader('Authorization', $this->accessToken);
         $response = $this->network->post($url, $params);
@@ -330,7 +395,7 @@ class Client
         $encryptData['status'] = 'success';
 
         $params = [
-            'encrypt_data' => @openssl_encrypt(json_encode($encryptData), 'aes-256-cfb', $this->appSecret)
+            'encrypt_data' => openssl_encrypt(json_encode($encryptData), 'aes-256-cfb', $this->appSecret)
         ];
 
         $this->network->setHeader('Authorization', $this->accessToken);
