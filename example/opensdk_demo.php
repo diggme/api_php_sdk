@@ -66,9 +66,14 @@ $result5 = $sdk->getTestCodeStatus($result3['code'])->getData();
 print json_encode($result5) . PHP_EOL;
 print PHP_EOL;
 
+# 查询报告页面
+//print "REPORT_URL:" . PHP_EOL;
+$result6 = $sdk->getTestReport($testId, $result3['code']);
+print json_encode($result6) . PHP_EOL;
 
 # 测试报告页面（可嵌入iframe/webview）
 print "REPORT";
+$yourSystemEnv = 'prod';
 if ($yourSystemEnv == 'prod') {
     print "http://wx.diggme.cn/channel/entry.html?channel_id=89&test_id=32&in_code=" . $result3['code'];
 } else {

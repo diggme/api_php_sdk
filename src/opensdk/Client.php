@@ -345,7 +345,7 @@ class Client
      * @param string $format
      * @return Result
      */
-    public function getTestReport($test_id, $in_code, $format = ' json')
+    public function getTestReport($test_id, $in_code, $format = 'json')
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/test/report');
 
