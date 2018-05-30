@@ -68,13 +68,22 @@ class Client
         $this->network->setHeader('Authorization', $this->accessToken);
     }
 
+    /**
+     * 设置接口环境
+     * @param $env
+     */
     public function setEnv($env)
     {
-        $this->serverUrl = 'http://api.diggme.local/api/v1';
-        if ($env === 'develop') {
-            $this->serverUrl = 'http://apidev.diggme.cn/api/v1';
-        } elseif ($env === 'prod' || $env === 'production') {
-            $this->serverUrl = 'http://api.diggme.cn/api/v1';
+        switch ($env) {
+
+            case 'local':
+                $this->serverUrl = 'http://api.diggme.local/api/agent/v1';
+                break;
+            case 'develop':
+                $this->serverUrl = 'http://apidev.diggme.cn/api/agent/v1';
+                break;
+            default:
+                $this->serverUrl = 'https://api.diggme.cn/api/agent/v1';
         }
     }
 
@@ -85,6 +94,7 @@ class Client
     /**
      * 方法1: [client_credential 客户端模式] 根据分配的APPKEY/APPSECRET, 获取access_token
      * @return Result
+     * @throws \Exception
      */
     public function getAccessToken()
     {
@@ -120,6 +130,7 @@ class Client
      * 方法2: [authorize_code 网页授权模式] 根据回调code参数获取access_token
      * @param string $code
      * @return Result
+     * @throws \Exception
      */
     public function getAccessTokenByCode($code)
     {
@@ -143,6 +154,7 @@ class Client
      * @param string $account
      * @param string $password
      * @return Result
+     * @throws \Exception
      */
     public function getUserToken($account, $password)
     {
@@ -160,6 +172,7 @@ class Client
      * 获取用户access_token (使用Diggme开放平台回调code)
      * @param $code
      * @return Result
+     * @throws \Exception
      */
     public function getUserTokenByCode($code)
     {
@@ -177,6 +190,7 @@ class Client
      * @param string $code
      * @param string $flag
      * @return Result
+     * @throws \Exception
      */
     public function getUserTokenByThirdCode($code, $flag = 'wx')
     {
@@ -197,6 +211,7 @@ class Client
     /**
      * 测试分类
      * @return Result
+     * @throws \Exception
      */
     public function getTestCategoryList()
     {
@@ -212,6 +227,7 @@ class Client
      * @param int $page
      * @param int $size
      * @return Result
+     * @throws \Exception
      */
     public function getTestList($category_id, $page = 1, $size = 20)
     {
@@ -228,6 +244,7 @@ class Client
      * 测试详情
      * @param $test_id
      * @return Result
+     * @throws \Exception
      */
     public function getTestDetail($test_id)
     {

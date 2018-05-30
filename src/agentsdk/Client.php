@@ -68,13 +68,22 @@ class Client
         $this->network->setHeader('Authorization', $this->accessToken);
     }
 
+    /**
+     * 设置接口环境
+     * @param $env
+     */
     public function setEnv($env)
     {
-        $this->serverUrl = 'http://api.diggme.local/api/agent/v1';
-        if ($env === 'develop') {
-            $this->serverUrl = 'http://apidev.diggme.cn/api/agent/v1';
-        } elseif ($env === 'prod' || $env === 'production') {
-            $this->serverUrl = 'http://api.diggme.cn/api/agent/v1';
+        switch ($env) {
+
+            case 'local':
+                $this->serverUrl = 'http://api.diggme.local/api/agent/v1';
+                break;
+            case 'develop':
+                $this->serverUrl = 'http://apidev.diggme.cn/api/agent/v1';
+                break;
+            default:
+                $this->serverUrl = 'https://api.diggme.cn/api/agent/v1';
         }
     }
 
@@ -85,6 +94,7 @@ class Client
     /**
      * 方法1: [client_credential 客户端模式] 根据分配的APPKEY/APPSECRET, 获取access_token
      * @return Result
+     * @throws \Exception
      */
     public function getAccessToken()
     {
@@ -103,6 +113,11 @@ class Client
      * Channel Manage (渠道管理)
      ************************************************************************/
 
+    /**
+     * 查询渠道列表
+     * @return Result
+     * @throws \Exception
+     */
     public function getChannelList()
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/list');
@@ -111,6 +126,12 @@ class Client
         return new Result($response);
     }
 
+    /**
+     * 查询单个渠道
+     * @param $channelId
+     * @return Result
+     * @throws \Exception
+     */
     public function getChannelDetail($channelId)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/detail');
@@ -121,27 +142,45 @@ class Client
         return new Result($response);
     }
 
-
-    public function postChannelCreate($channelId)
+    /**
+     * 创建渠道信息
+     * @param $data
+     * @return Result
+     * @throws \Exception
+     * @internal $data ['name','logo','pic','qrcode','contact_name','mobile'] 字段类型
+     */
+    public function postChannelCreate($data)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/create');
         $this->network->setHeader('Authorization', $this->accessToken);
-        $response = $this->network->post($url, [
-            'channel_id' => $channelId
-        ]);
+        $response = $this->network->post($url, $data);
         return new Result($response);
     }
 
+    /**
+     * 更新渠道信息
+     * @param $channelId
+     * @param $data
+     * @return Result
+     * @throws \Exception
+     * @internal $data ['name','logo','pic','qrcode','contact_name','mobile'] 字段类型
+     */
     public function postChannelUpdate($channelId, $data)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/update');
         $this->network->setHeader('Authorization', $this->accessToken);
-        $response = $this->network->get($url, [
+        $response = $this->network->post($url, array_merge([
             'channel_id' => $channelId
-        ]);
+        ], $data));
         return new Result($response);
     }
 
+    /**
+     * 删除渠道
+     * @param $channelId
+     * @return Result
+     * @throws \Exception
+     */
     public function postChannelDelete($channelId)
     {
         $url = sprintf('%s/%s', $this->serverUrl, 'channel/delete');
